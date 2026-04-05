@@ -1,0 +1,155 @@
+import SwiftUI
+
+// MARK: - Menu Bar 下拉選單
+
+/// Menu Bar 點擊後顯示的選單內容
+struct MenuBarView: View {
+    let appState: AppState
+    let onSyncAll: () -> Void
+    let onTogglePause: () -> Void
+    let onSyncPair: (SyncPair) -> Void
+
+    @Environment(\.openWindow) private var openWindow
+    private var l: L10n { L10n.shared }
+
+    var body: some View {
+        // 狀態標題
+        Button {} label: {
+            HStack(spacing: 6) {
+                Text("FolderSync")
+                    .font(.rounded(13, weight: .semibold))
+                Spacer()
+                Circle()
+                    .fill(Theme.color(for: appState.overallStatus))
+                    .frame(width: 8, height: 8)
+                Text(appState.overallStatus.displayName)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .disabled(true)
+
+        Divider()
+
+        // 同步配對列表
+        if appState.syncPairs.isEmpty {
+            Text(l["menuNoSyncPairs"])
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+        } else {
+            ForEach(appState.syncPairs) { pair in
+                MenuBarPairRow(
+                    pair: pair,
+                    status: appState.status(for: pair.id),
+                    lastSyncText: appState.lastSyncText(for: pair),
+                    onSync: { onSyncPair(pair) }
+                )
+            }
+        }
+
+        Divider()
+
+        // 動作按鈕
+        Button {
+            onSyncAll()
+        } label: {
+            Label(l["menuSyncAll"], systemImage: "arrow.triangle.2.circlepath")
+        }
+        .disabled(appState.syncPairs.isEmpty)
+
+        Button {
+            onTogglePause()
+        } label: {
+            if appState.isGloballyPaused {
+                Label(l["menuResumeAll"], systemImage: "play.circle")
+            } else {
+                Label(l["menuPauseAll"], systemImage: "pause.circle")
+            }
+        }
+
+        Divider()
+
+        Button {
+            openWindow(id: "settings")
+            NSApp.activate(ignoringOtherApps: true)
+        } label: {
+            Label(l["menuSettings"], systemImage: "gearshape")
+        }
+        .keyboardShortcut(",", modifiers: .command)
+
+        Button {
+            NSApplication.shared.terminate(nil)
+        } label: {
+            Label(l["menuQuit"], systemImage: "xmark.circle")
+        }
+        .keyboardShortcut("q", modifiers: .command)
+    }
+}
+
+// MARK: - Menu Bar 配對行
+
+private struct MenuBarPairRow: View {
+    let pair: SyncPair
+    let status: SyncStatus
+    let lastSyncText: String
+    let onSync: () -> Void
+
+    @State private var isPulsing = false
+
+    var body: some View {
+        Button(action: onSync) {
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(Theme.color(for: status))
+                    .frame(width: 7, height: 7)
+                    .opacity(status == .syncing ? (isPulsing ? 0.3 : 1.0) : 1.0)
+                    .animation(
+                        status == .syncing
+                            ? .easeInOut(duration: 1).repeatForever(autoreverses: true)
+                            : .default,
+                        value: isPulsing
+                    )
+
+                Text(pair.name.isEmpty ? pair.shortSourcePath : pair.name)
+                    .font(.system(size: 13))
+                    .lineLimit(1)
+
+                Image(systemName: pair.direction.symbolName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+
+                Spacer()
+
+                Group {
+                    switch status {
+                    case .error:
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(Theme.error)
+                    case .syncing:
+                        ProgressView()
+                            .controlSize(.small)
+                    case .paused:
+                        Image(systemName: "pause.fill")
+                            .foregroundStyle(.secondary)
+                    default:
+                        Text(lastSyncText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .font(.caption)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 3)
+        }
+        .buttonStyle(.plain)
+        .onAppear {
+            if status == .syncing { isPulsing = true }
+        }
+        .onChange(of: status) { _, newValue in
+            isPulsing = newValue == .syncing
+        }
+    }
+}
