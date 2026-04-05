@@ -14,7 +14,7 @@ enum Theme {
     static func color(for status: SyncStatus) -> Color {
         switch status {
         case .idle, .watching: return success
-        case .syncing: return primary
+        case .syncing: return warning
         case .error: return error
         case .paused: return .secondary
         }

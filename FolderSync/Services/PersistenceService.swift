@@ -83,7 +83,7 @@ final class PersistenceService: Sendable {
             let data = try Data(contentsOf: configFile)
             return try decoder.decode(AppConfig.self, from: data)
         } catch {
-            print("[PersistenceService] 設定檔讀取失敗: \(error.localizedDescription)")
+            logError("[PersistenceService] 設定檔讀取失敗: \(error.localizedDescription)")
             return AppConfig()
         }
     }
@@ -106,7 +106,7 @@ final class PersistenceService: Sendable {
             let data = try Data(contentsOf: logsFile)
             return try decoder.decode([SyncLogEntry].self, from: data)
         } catch {
-            print("[PersistenceService] 日誌讀取失敗: \(error.localizedDescription)")
+            logError("[PersistenceService] 日誌讀取失敗: \(error.localizedDescription)")
             return []
         }
     }

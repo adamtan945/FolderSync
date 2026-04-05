@@ -11,17 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Universal cloud placeholder download: automatically download cloud-only files before sync (supports iCloud, Google Drive, Dropbox, OneDrive, etc.)
 - Uses macOS native `FileManager.startDownloadingUbiquitousItem` API instead of iCloud-specific `brctl`
 - FSEvents filter for Google Drive `.tmp.drivedownload` temporary files
+- File-based logging to `~/Library/Application Support/FolderSync/Logs/{YYYY-MM-DD-HH}.log` with auto-cleanup (30 days retention)
+- Per-file sync logging: every synced and conflicted file is recorded in log
+- Menu Bar sync pair status pill badge (syncing/error/paused) with color coding
 
 ### Fixed
 - Export settings button color now matches import button (was purple, now consistent gray)
+- Auto-update CodingKeys bug: `browser_download_url` was not decoded correctly, preventing update detection since v1.1.0
+- Menu Bar syncing status color changed from indigo to amber (traffic light semantics: green/yellow/red)
 
 ### 新增
 - 通用雲端佔位檔下載：同步前自動下載僅存在雲端的檔案（支援 iCloud、Google Drive、Dropbox、OneDrive 等）
 - 使用 macOS 原生 `FileManager.startDownloadingUbiquitousItem` API 取代 iCloud 專用的 `brctl`
 - FSEvents 過濾 Google Drive `.tmp.drivedownload` 暫存檔
+- 檔案日誌：寫入 `~/Library/Application Support/FolderSync/Logs/{YYYY-MM-DD-HH}.log`，自動清除超過 30 天的日誌
+- 逐檔同步日誌：每筆同步的檔案和衝突檔案都會記錄到日誌
+- Menu Bar 同步配對狀態標籤（同步中/錯誤/已暫停），以 pill badge 顯示
 
 ### 修正
 - 匯出設定按鈕顏色統一為與匯入按鈕一致（原為紫色填滿，改為灰色外框）
+- 自動更新 CodingKeys bug：`browser_download_url` 未正確解碼，導致 v1.1.0 起無法偵測更新
+- Menu Bar 同步中狀態顏色從靛藍改為琥珀黃（紅綠燈語義：綠/黃/紅）
 
 ## [1.1.1] - 2026-04-05
 

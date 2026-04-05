@@ -28,7 +28,7 @@ enum CloudFileHelper {
         let notDownloaded = findNotDownloaded(in: directoryPath)
         guard !notDownloaded.isEmpty else { return }
 
-        print("[CloudFileHelper] 發現 \(notDownloaded.count) 個未下載的雲端檔案，開始下載...")
+        logInfo("[CloudFileHelper] 發現 \(notDownloaded.count) 個未下載的雲端檔案，開始下載...")
 
         // 對每個檔案觸發下載
         let fm = FileManager.default
@@ -36,7 +36,7 @@ enum CloudFileHelper {
             do {
                 try fm.startDownloadingUbiquitousItem(at: url)
             } catch {
-                print("[CloudFileHelper] 無法觸發下載 \(url.lastPathComponent): \(error.localizedDescription)")
+                logError("[CloudFileHelper] 無法觸發下載 \(url.lastPathComponent): \(error.localizedDescription)")
             }
         }
 
@@ -132,7 +132,7 @@ enum CloudFileHelper {
             remaining.subtract(completed)
 
             if remaining.isEmpty {
-                print("[CloudFileHelper] 所有雲端檔案已下載完成")
+                logInfo("[CloudFileHelper] 所有雲端檔案已下載完成")
                 return
             }
 
@@ -140,7 +140,7 @@ enum CloudFileHelper {
         }
 
         if !remaining.isEmpty {
-            print("[CloudFileHelper] 警告：\(remaining.count) 個檔案下載逾時，繼續同步")
+            logWarn("[CloudFileHelper] \(remaining.count) 個檔案下載逾時，繼續同步")
         }
     }
 }

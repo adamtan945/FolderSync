@@ -130,7 +130,7 @@ final class SyncManager {
     func triggerSync(for pair: SyncPair) async {
         // 防止同一配對並行同步
         guard !syncLocks.contains(pair.id) else {
-            print("[SyncManager] 配對「\(pair.name)」正在同步中，跳過")
+            logInfo("[SyncManager] 配對「\(pair.name)」正在同步中，跳過")
             return
         }
 
@@ -161,6 +161,8 @@ final class SyncManager {
         // 開始同步
         syncLocks.insert(pair.id)
         appState.pairStatuses[pair.id] = .syncing
+        let pairLabel = pair.name.isEmpty ? pair.shortSourcePath : pair.name
+        logInfo("[SyncManager] 開始同步「\(pairLabel)」: \(pair.sourcePath) ↔ \(pair.destinationPath)")
 
         do {
             // 雲端佔位檔下載（iCloud、Google Drive 等）
@@ -244,7 +246,7 @@ final class SyncManager {
                 try SMAppService.mainApp.unregister()
             }
         } catch {
-            print("[SyncManager] 登入啟動設定失敗: \(error.localizedDescription)")
+            logError("[SyncManager] 登入啟動設定失敗: \(error.localizedDescription)")
         }
         appState.saveToDisk()
     }
@@ -265,7 +267,7 @@ final class SyncManager {
                 appState.updateAvailable = false
             }
         } catch {
-            print("[SyncManager] 檢查更新失敗: \(error.localizedDescription)")
+            logError("[SyncManager] 檢查更新失敗: \(error.localizedDescription)")
             appState.updateError = error.localizedDescription
         }
 
@@ -300,7 +302,7 @@ final class SyncManager {
         } catch {
             appState.isDownloadingUpdate = false
             appState.updateError = error.localizedDescription
-            print("[SyncManager] 更新失敗: \(error.localizedDescription)")
+            logError("[SyncManager] 更新失敗: \(error.localizedDescription)")
         }
     }
 

@@ -134,7 +134,7 @@ final class AppState {
         do {
             try PersistenceService.saveConfig(config)
         } catch {
-            print("[AppState] 儲存設定失敗: \(error.localizedDescription)")
+            logError("[AppState] 儲存設定失敗: \(error.localizedDescription)")
         }
     }
 }

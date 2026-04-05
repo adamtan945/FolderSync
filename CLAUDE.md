@@ -37,6 +37,7 @@ FolderSyncApp
 │   ├── FileWatcherService   — FSEvents C API 監視器，含 2 秒 debounce
 │   ├── PersistenceService   — JSON 讀寫至 ~/Library/Application Support/FolderSync/
 │   ├── CloudFileHelper       — 偵測雲端佔位檔（iCloud、Google Drive 等），用 macOS ubiquitous item API 下載
+│   ├── FileLogger           — 檔案日誌服務，寫入 Logs/{YYYY-MM-DD-HH}.log，自動清除 30 天前日誌
 │   └── UpdateService        — actor；透過 GitHub Releases API 檢查更新 + DMG 下載安裝
 ├── Models/
 │   ├── SyncPair        — 來源/目的路徑、方向、排除規則、啟用狀態

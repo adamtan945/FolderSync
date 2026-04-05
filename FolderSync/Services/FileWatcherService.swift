@@ -57,7 +57,7 @@ final class FileWatcherService {
                 kFSEventStreamCreateFlagNoDefer
             )
         ) else {
-            print("[FileWatcherService] FSEventStreamCreate 失敗")
+            logError("[FileWatcherService] FSEventStreamCreate 失敗")
             return
         }
 
@@ -65,7 +65,7 @@ final class FileWatcherService {
         FSEventStreamSetDispatchQueue(eventStream, queue)
         FSEventStreamStart(eventStream)
 
-        print("[FileWatcherService] 開始監控: \(paths)")
+        logInfo("[FileWatcherService] 開始監控: \(paths)")
     }
 
     /// 停止 FSEvents 監控
@@ -78,7 +78,7 @@ final class FileWatcherService {
             FSEventStreamInvalidate(stream)
             FSEventStreamRelease(stream)
             self.stream = nil
-            print("[FileWatcherService] 停止監控")
+            logInfo("[FileWatcherService] 停止監控")
         }
     }
 

@@ -101,13 +101,14 @@ actor UnisonService {
         var filesChanged = 0
         var conflictFiles: [String] = []
 
-        // 計算同步的檔案數
+        // 計算同步的檔案數並記錄每筆檔案操作
         // unison 輸出格式：  <---- filename  或  ----> filename  或  <-?-> filename（衝突）
         let lines = stdout.components(separatedBy: .newlines)
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
             if trimmed.contains("<----") || trimmed.contains("---->") || trimmed.contains("<--->") {
                 filesChanged += 1
+                logInfo("[UnisonService] 同步檔案: \(trimmed)")
             }
             // 衝突檔偵測
             if trimmed.contains("<-?->") || trimmed.contains("conflict") {
@@ -115,8 +116,14 @@ actor UnisonService {
                 let parts = trimmed.components(separatedBy: "  ").filter { !$0.isEmpty }
                 if let filename = parts.last?.trimmingCharacters(in: .whitespaces) {
                     conflictFiles.append(filename)
+                    logWarn("[UnisonService] 衝突檔案: \(filename)")
                 }
             }
+        }
+
+        // 記錄 unison 完整輸出（含 stderr）以便偵錯
+        if !stderr.isEmpty {
+            logWarn("[UnisonService] stderr: \(stderr)")
         }
 
         let success: Bool
@@ -188,7 +195,7 @@ actor UnisonService {
                     }
                     try fm.moveItem(at: url, to: newURL)
                 } catch {
-                    print("[UnisonService] 衝突檔重命名失敗: \(error.localizedDescription)")
+                    logError("[UnisonService] 衝突檔重命名失敗: \(error.localizedDescription)")
                 }
             }
         }

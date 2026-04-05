@@ -57,7 +57,7 @@ final class L10n: @unchecked Sendable {
         var discovered: [DiscoveredLanguage] = []
 
         guard let files = try? fm.contentsOfDirectory(at: localesDir, includingPropertiesForKeys: nil) else {
-            print("[L10n] 無法列出 Locales 目錄: \(localesDir.path)")
+            logWarn("[L10n] 無法列出 Locales 目錄: \(localesDir.path)")
             return
         }
 
@@ -89,14 +89,14 @@ final class L10n: @unchecked Sendable {
     private static func loadJSON(at dir: URL, filename: String) -> [String: String] {
         let url = dir.appendingPathComponent("\(filename).json")
         guard FileManager.default.fileExists(atPath: url.path) else {
-            print("[L10n] 找不到語系檔: \(url.path)")
+            logWarn("[L10n] 找不到語系檔: \(url.path)")
             return [:]
         }
         do {
             let data = try Data(contentsOf: url)
             return try JSONDecoder().decode([String: String].self, from: data)
         } catch {
-            print("[L10n] JSON 解析失敗 (\(filename).json): \(error.localizedDescription)")
+            logError("[L10n] JSON 解析失敗 (\(filename).json): \(error.localizedDescription)")
             return [:]
         }
     }
@@ -134,7 +134,7 @@ final class L10n: @unchecked Sendable {
         }
 
         // 最終 fallback
-        print("[L10n] 找不到 Locales 目錄，使用空字串")
+        logWarn("[L10n] 找不到 Locales 目錄，使用空字串")
         return URL(fileURLWithPath: "/tmp")
     }
 }

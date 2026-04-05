@@ -123,55 +123,33 @@ private struct MenuBarPairRow: View {
     var body: some View {
         Button(action: onSync) {
             HStack(spacing: 8) {
-                Circle()
-                    .fill(Theme.color(for: status))
-                    .frame(width: 7, height: 7)
-                    .opacity(status == .syncing ? (isPulsing ? 0.3 : 1.0) : 1.0)
-                    .animation(
-                        status == .syncing
-                            ? .easeInOut(duration: 1).repeatForever(autoreverses: true)
-                            : .default,
-                        value: isPulsing
-                    )
+                Image(systemName: pair.direction.symbolName)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
 
                 Text(pair.name.isEmpty ? pair.shortSourcePath : pair.name)
                     .font(.system(size: 13))
                     .lineLimit(1)
 
-                Image(systemName: pair.direction.symbolName)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-
                 Spacer()
 
-                Group {
-                    switch status {
-                    case .error:
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(Theme.error)
-                    case .syncing:
-                        ProgressView()
-                            .controlSize(.small)
-                    case .paused:
-                        Image(systemName: "pause.fill")
-                            .foregroundStyle(.secondary)
-                    default:
-                        Text(lastSyncText)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                switch status {
+                case .syncing, .error, .paused:
+                    Text(status.displayName)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Theme.color(for: status), in: Capsule())
+                default:
+                    Text(lastSyncText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .font(.caption)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 3)
         }
         .buttonStyle(.plain)
-        .onAppear {
-            if status == .syncing { isPulsing = true }
-        }
-        .onChange(of: status) { _, newValue in
-            isPulsing = newValue == .syncing
-        }
     }
 }

@@ -17,6 +17,11 @@ actor UpdateService {
         struct Asset: Decodable {
             let name: String
             let browserDownloadUrl: String
+
+            enum CodingKeys: String, CodingKey {
+                case name
+                case browserDownloadUrl = "browser_download_url"
+            }
         }
 
         enum CodingKeys: String, CodingKey {
@@ -59,18 +64,18 @@ actor UpdateService {
             : release.tagName
 
         guard isNewer(remoteVersion, than: Self.currentVersion) else {
-            print("[UpdateService] 已是最新版本 (\(Self.currentVersion))")
+            logInfo("[UpdateService] 已是最新版本 (\(Self.currentVersion))")
             return nil
         }
 
         // 找到 DMG asset
         guard let dmgAsset = release.assets.first(where: { $0.name.hasSuffix(".dmg") }),
               let downloadURL = URL(string: dmgAsset.browserDownloadUrl) else {
-            print("[UpdateService] 新版 \(remoteVersion) 無 DMG 下載連結")
+            logWarn("[UpdateService] 新版 \(remoteVersion) 無 DMG 下載連結")
             return nil
         }
 
-        print("[UpdateService] 發現新版本: \(remoteVersion)")
+        logInfo("[UpdateService] 發現新版本: \(remoteVersion)")
         return (remoteVersion, downloadURL)
     }
 
@@ -120,7 +125,7 @@ actor UpdateService {
 
         progress(1.0)
         try data.write(to: destinationURL, options: .atomic)
-        print("[UpdateService] DMG 下載完成: \(destinationURL.path)")
+        logInfo("[UpdateService] DMG 下載完成: \(destinationURL.path)")
         return destinationURL
     }
 
@@ -173,7 +178,7 @@ actor UpdateService {
         // 6. 清除暫存 DMG
         try? FileManager.default.removeItem(at: dmgPath)
 
-        print("[UpdateService] 安裝完成，準備重新啟動")
+        logInfo("[UpdateService] 安裝完成，準備重新啟動")
 
         // 7. 重新啟動
         await MainActor.run {
