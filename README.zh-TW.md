@@ -35,12 +35,8 @@
 
 1. 從 [Releases](https://github.com/adamtan945/FolderSync/releases) 下載最新的 `.dmg`
 2. 打開 DMG，將 **FolderSync** 拖入「應用程式」資料夾
-3. 移除隔離屬性（App 未經 Apple 簽名）：
-   ```bash
-   xattr -cr /Applications/FolderSync.app
-   ```
-4. 啟動 FolderSync，圖示會出現在 Menu Bar
-5. 若尚未安裝 unison：
+3. 啟動 FolderSync，圖示會出現在 Menu Bar
+4. 若尚未安裝 unison：
    ```bash
    brew install unison
    ```
