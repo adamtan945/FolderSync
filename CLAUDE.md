@@ -33,7 +33,7 @@ FolderSyncApp
 │   ├── SyncManager     — @Observable @MainActor 調度器；擁有 AppState 及所有 Service
 │   └── AppState        — @Observable 全域狀態（同步配對、狀態、日誌、設定）
 ├── Services/
-│   ├── UnisonService        — actor；組建 CLI 參數、啟動 unison Process、解析結果
+│   ├── UnisonService        — actor；組建 CLI 參數、啟動 unison Process、解析結果（用 readabilityHandler 非同步讀 pipe 避免死鎖）
 │   ├── FileWatcherService   — FSEvents C API 監視器，含 2 秒 debounce
 │   ├── PersistenceService   — JSON 讀寫至 ~/Library/Application Support/FolderSync/
 │   ├── CloudFileHelper       — 偵測雲端佔位檔（iCloud、Google Drive 等），用 macOS ubiquitous item API 下載
@@ -57,7 +57,7 @@ FolderSyncApp
 
 1. **檔案變更 → 同步：** FSEvents → 2 秒 debounce → `SyncManager.triggerSync()` → 雲端佔位檔下載（如需要）→ `UnisonService.sync()` → 更新 `AppState` → UI 重新渲染
 2. **並行安全：** `SyncManager.syncLocks: Set<UUID>` 防止同一配對的並行同步。`UnisonService` 和 `UpdateService` 為 `actor` 型別。
-3. **持久化：** 設定與日誌以 JSON 格式儲存於 `~/Library/Application Support/FolderSync/`，日誌上限 500 筆。
+3. **持久化：** 設定與 UI 日誌以 JSON 格式儲存於 `~/Library/Application Support/FolderSync/`，UI 日誌上限 500 筆。偵錯日誌另存於 `Logs/{YYYY-MM-DD-HH}.log`，保留 30 天。
 
 ### Unison 結束碼
 
@@ -105,6 +105,11 @@ fileicon set build/FolderSync-X.Y.Z.dmg build/AppIcon.icns
 # 6. 上傳至 GitHub Release
 gh release create vX.Y.Z build/FolderSync-X.Y.Z.dmg --title "vX.Y.Z" --notes "..."
 ```
+
+## 已知限制
+
+- **MenuBarExtra**：macOS 的 `.menu` 樣式只支援標準選單元件（Button、Text、Divider），不支援自訂 SwiftUI 視圖（Capsule、背景色等）。狀態顯示需用純文字 + SF Symbol。
+- **Pipe 死鎖風險**：`Process` + `Pipe` 在大量輸出時必須用 `readabilityHandler` 非同步讀取，否則 pipe buffer（64KB）滿時會死鎖。已在 `UnisonService` 中修正。
 
 ## 執行時依賴
 
