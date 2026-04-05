@@ -53,6 +53,7 @@
   "directionBidirectional": "Bidirectional",
 
   "logTitle": "Sync Log",
+  "logOpenFolder": "Open log folder",
   "logEmpty": "No sync records yet",
   "logNoMatch": "No matching records",
   "logErrorsOnly": "Errors only",

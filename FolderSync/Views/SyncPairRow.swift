@@ -138,20 +138,20 @@ struct SyncPairRow: View {
             .background(Capsule().fill(Theme.color(for: status).opacity(0.12)))
     }
 
-    @State private var arrowRotation: Double = 0
+    @State private var arrowOffset: CGFloat = 0
 
     private var directionArrow: some View {
         Image(systemName: pair.direction.symbolName)
             .font(.title3)
             .foregroundStyle(Theme.color(for: status))
-            .rotationEffect(.degrees(arrowRotation))
+            .offset(x: arrowOffset)
             .onChange(of: status) { _, newValue in
                 if newValue == .syncing {
-                    withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
-                        arrowRotation = 360
+                    withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                        arrowOffset = 6
                     }
                 } else {
-                    withAnimation(.default) { arrowRotation = 0 }
+                    withAnimation(.default) { arrowOffset = 0 }
                 }
             }
     }

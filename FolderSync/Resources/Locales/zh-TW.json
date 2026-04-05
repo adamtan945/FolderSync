@@ -53,6 +53,7 @@
   "directionBidirectional": "雙向同步",
 
   "logTitle": "同步日誌",
+  "logOpenFolder": "開啟日誌資料夾",
   "logEmpty": "尚無同步紀錄",
   "logNoMatch": "無符合條件的紀錄",
   "logErrorsOnly": "僅顯示錯誤",

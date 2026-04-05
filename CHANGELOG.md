@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - File-based logging to `~/Library/Application Support/FolderSync/Logs/{YYYY-MM-DD-HH}.log` with auto-cleanup (30 days retention)
 - Per-file sync logging: every synced and conflicted file is recorded in log
 - Menu Bar sync pair status text (syncing/error/paused) with SF Symbol icons
+- Open log folder button in Sync Log view
+- Sync direction arrow animates with horizontal slide during syncing
 
 ### Fixed
 - Unison pipe deadlock: large output (34k+ files) caused app to hang indefinitely during sync
@@ -28,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - 檔案日誌：寫入 `~/Library/Application Support/FolderSync/Logs/{YYYY-MM-DD-HH}.log`，自動清除超過 30 天的日誌
 - 逐檔同步日誌：每筆同步的檔案和衝突檔案都會記錄到日誌
 - Menu Bar 同步配對狀態文字（同步中/錯誤/已暫停），搭配 SF Symbol 圖示
+- 同步日誌頁面新增「開啟日誌資料夾」按鈕
+- 同步中方向箭頭改為左右滑動動畫
 
 ### 修正
 - Unison pipe 死鎖：大量輸出（34,000+ 檔案）導致同步時 app 永久卡住

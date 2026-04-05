@@ -30,6 +30,18 @@ struct SyncLogView: View {
             HStack {
                 Text(l["logTitle"])
                     .font(.rounded(20, weight: .semibold))
+
+                Button {
+                    let logsDir = PersistenceService.appSupportDir.appendingPathComponent("Logs")
+                    NSWorkspace.shared.open(logsDir)
+                } label: {
+                    Image(systemName: "folder")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .help(l["logOpenFolder"])
+
                 Spacer()
                 Toggle(isOn: $showErrorsOnly) {
                     Label(l["logErrorsOnly"], systemImage: "exclamationmark.triangle")
