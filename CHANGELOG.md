@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-04-05
+
+### Changed
+- Replaced app icon with new flat folder-sync design
+- Added CLAUDE.md for Claude Code project guidance
+
+### 變更
+- 更換應用程式圖示為全新扁平化資料夾同步設計
+- 新增 CLAUDE.md 作為 Claude Code 專案指引
+
 ## [1.1.0] - 2026-04-05
 
 ### Added

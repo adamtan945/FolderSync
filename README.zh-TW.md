@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](CHANGELOG.md)
 [![Swift](https://img.shields.io/badge/Swift-5.10-F05138.svg)](https://swift.org/)
 [![macOS](https://img.shields.io/badge/macOS-14%2B-000000.svg)](https://www.apple.com/macos/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
