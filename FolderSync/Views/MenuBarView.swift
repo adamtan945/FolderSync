@@ -120,36 +120,33 @@ private struct MenuBarPairRow: View {
 
     @State private var isPulsing = false
 
+    /// 配對顯示名稱
+    private var pairLabel: String {
+        pair.name.isEmpty ? pair.shortSourcePath : pair.name
+    }
+
+    /// 狀態文字（Menu Bar 不支援自訂樣式，用純文字表達）
+    private var statusText: String {
+        switch status {
+        case .syncing, .error, .paused:
+            return "【\(status.displayName)】"
+        default:
+            return lastSyncText
+        }
+    }
+
     var body: some View {
         Button(action: onSync) {
-            HStack(spacing: 8) {
-                Image(systemName: pair.direction.symbolName)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-
-                Text(pair.name.isEmpty ? pair.shortSourcePath : pair.name)
-                    .font(.system(size: 13))
-                    .lineLimit(1)
-
-                Spacer()
-
-                switch status {
-                case .syncing, .error, .paused:
-                    Text(status.displayName)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
-                        .background(Theme.color(for: status), in: Capsule())
-                default:
-                    Text(lastSyncText)
-                        .font(.caption)
+            Label {
+                HStack {
+                    Text(pairLabel)
+                    Spacer()
+                    Text(statusText)
                         .foregroundStyle(.secondary)
                 }
+            } icon: {
+                Image(systemName: status.symbolName)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 3)
         }
-        .buttonStyle(.plain)
     }
 }

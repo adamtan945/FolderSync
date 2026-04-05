@@ -5,7 +5,7 @@ import AppKit
 
 /// 透過 GitHub Releases API 檢查新版本、下載 DMG、安裝更新
 actor UpdateService {
-    static let currentVersion = "1.3.0"
+    static let currentVersion = "1.2.0"
     static let repo = "adamtan945/FolderSync"
 
     // MARK: - GitHub Release 資料結構

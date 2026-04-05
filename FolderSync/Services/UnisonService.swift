@@ -12,6 +12,7 @@ actor UnisonService {
     /// 執行同步
     func sync(pair: SyncPair, unisonPath: String, globalExclusions: [String]) async throws -> SyncResult {
         let args = buildArguments(for: pair, globalExclusions: globalExclusions)
+        logInfo("[UnisonService] 執行: \(unisonPath) \(args.joined(separator: " "))")
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: unisonPath)
@@ -22,11 +23,40 @@ actor UnisonService {
         process.standardOutput = stdoutPipe
         process.standardError = stderrPipe
 
+        // 在背景非同步讀取 pipe，避免 buffer 滿時死鎖
+        var stdoutData = Data()
+        var stderrData = Data()
+
+        let stdoutSource = DispatchSemaphore(value: 0)
+        let stderrSource = DispatchSemaphore(value: 0)
+
+        stdoutPipe.fileHandleForReading.readabilityHandler = { handle in
+            let data = handle.availableData
+            if data.isEmpty {
+                stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                stdoutSource.signal()
+            } else {
+                stdoutData.append(data)
+            }
+        }
+
+        stderrPipe.fileHandleForReading.readabilityHandler = { handle in
+            let data = handle.availableData
+            if data.isEmpty {
+                stderrPipe.fileHandleForReading.readabilityHandler = nil
+                stderrSource.signal()
+            } else {
+                stderrData.append(data)
+            }
+        }
+
         try process.run()
         process.waitUntilExit()
 
-        let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
-        let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+        // 等待 pipe 讀取完成
+        stdoutSource.wait()
+        stderrSource.wait()
+
         let stdout = String(data: stdoutData, encoding: .utf8) ?? ""
         let stderr = String(data: stderrData, encoding: .utf8) ?? ""
 
