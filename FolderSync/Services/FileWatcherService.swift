@@ -97,7 +97,9 @@ final class FileWatcherService {
         // 忽略 .DS_Store 和 .icloud 檔案的變更（避免不必要的觸發）
         let hasRelevantChange = paths.contains { path in
             let filename = (path as NSString).lastPathComponent
-            return !filename.hasSuffix(".DS_Store") && !filename.hasSuffix(".icloud")
+            return !filename.hasSuffix(".DS_Store")
+                && !filename.hasSuffix(".icloud")
+                && !filename.hasSuffix(".tmp.drivedownload")
         }
 
         guard hasRelevantChange else { return }

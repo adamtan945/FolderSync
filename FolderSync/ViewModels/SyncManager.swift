@@ -163,13 +163,9 @@ final class SyncManager {
         appState.pairStatuses[pair.id] = .syncing
 
         do {
-            // iCloud 佔位檔處理
-            if ICloudHelper.isICloudPath(pair.sourcePath) {
-                try await ICloudHelper.downloadPlaceholders(at: pair.sourcePath)
-            }
-            if ICloudHelper.isICloudPath(pair.destinationPath) {
-                try await ICloudHelper.downloadPlaceholders(at: pair.destinationPath)
-            }
+            // 雲端佔位檔下載（iCloud、Google Drive 等）
+            try await CloudFileHelper.downloadPlaceholders(at: pair.sourcePath)
+            try await CloudFileHelper.downloadPlaceholders(at: pair.destinationPath)
 
             // 執行 unison 同步
             let result = try await unisonService.sync(

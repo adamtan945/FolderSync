@@ -36,7 +36,7 @@ FolderSyncApp
 │   ├── UnisonService        — actor；組建 CLI 參數、啟動 unison Process、解析結果
 │   ├── FileWatcherService   — FSEvents C API 監視器，含 2 秒 debounce
 │   ├── PersistenceService   — JSON 讀寫至 ~/Library/Application Support/FolderSync/
-│   ├── ICloudHelper         — 偵測 iCloud 路徑，執行 `brctl download` 下載佔位檔
+│   ├── CloudFileHelper       — 偵測雲端佔位檔（iCloud、Google Drive 等），用 macOS ubiquitous item API 下載
 │   └── UpdateService        — actor；透過 GitHub Releases API 檢查更新 + DMG 下載安裝
 ├── Models/
 │   ├── SyncPair        — 來源/目的路徑、方向、排除規則、啟用狀態
@@ -54,7 +54,7 @@ FolderSyncApp
 
 ### 關鍵資料流
 
-1. **檔案變更 → 同步：** FSEvents → 2 秒 debounce → `SyncManager.triggerSync()` → iCloud 佔位檔下載（如需要）→ `UnisonService.sync()` → 更新 `AppState` → UI 重新渲染
+1. **檔案變更 → 同步：** FSEvents → 2 秒 debounce → `SyncManager.triggerSync()` → 雲端佔位檔下載（如需要）→ `UnisonService.sync()` → 更新 `AppState` → UI 重新渲染
 2. **並行安全：** `SyncManager.syncLocks: Set<UUID>` 防止同一配對的並行同步。`UnisonService` 和 `UpdateService` 為 `actor` 型別。
 3. **持久化：** 設定與日誌以 JSON 格式儲存於 `~/Library/Application Support/FolderSync/`，日誌上限 500 筆。
 
@@ -71,12 +71,39 @@ FolderSyncApp
 
 `build/` 包含預建置的 DMG、`.app` 套件和 `AppIcon.icns`。此目錄已加入 gitignore。
 
-## Release 注意事項
+## Release 打包流程
 
-- **版號必須同步更新 `FolderSync/Services/UpdateService.swift:8` 的 `currentVersion`**，否則 app 的 check update 功能會失效（比對 GitHub 最新版時誤判為「已是最新」）。
-- Release 流程中需一併重建 `.app` 套件（更新 `Info.plist` 版號）和 DMG。
-- `.app` 套件需 ad-hoc 簽名（`codesign --force --deep --sign -`），簽名前先清除 xattr（`xattr -cr`）避免 resource fork 錯誤。
-- DMG 圖示透過 `fileicon set` 設定。
+**版號必須同步更新 `FolderSync/Services/UpdateService.swift:8` 的 `currentVersion`**，否則 app 的 check update 功能會失效。
+
+```bash
+# 1. Release 編譯
+swift build -c release
+
+# 2. 更新 Info.plist 版號（build/FolderSync.app/Contents/Info.plist）
+#    CFBundleVersion + CFBundleShortVersionString
+
+# 3. 組裝 .app bundle
+cp .build/arm64-apple-macosx/release/FolderSync build/FolderSync.app/Contents/MacOS/
+mkdir -p build/FolderSync.app/Contents/Resources/Resources/Locales
+cp FolderSync/Resources/Locales/*.json build/FolderSync.app/Contents/Resources/Resources/Locales/
+cp FolderSync/Resources/AppIcon.icns build/FolderSync.app/Contents/Resources/
+
+# 4. 清除 xattr + ad-hoc 簽名
+xattr -cr build/FolderSync.app
+codesign --force --deep --sign - build/FolderSync.app
+codesign -vv build/FolderSync.app  # 驗證
+
+# 5. 製作 DMG
+rm -rf build/dmg_staging
+mkdir -p build/dmg_staging
+ln -s /Applications build/dmg_staging/Applications
+cp -r build/FolderSync.app build/dmg_staging/
+hdiutil create -volname "FolderSync" -srcfolder build/dmg_staging -ov -format UDZO build/FolderSync-X.Y.Z.dmg
+fileicon set build/FolderSync-X.Y.Z.dmg build/AppIcon.icns
+
+# 6. 上傳至 GitHub Release
+gh release create vX.Y.Z build/FolderSync-X.Y.Z.dmg --title "vX.Y.Z" --notes "..."
+```
 
 ## 執行時依賴
 

@@ -30,8 +30,7 @@ struct BackupSettingsView: View {
                                 .font(.rounded(13))
                                 .frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Theme.primary)
+                        .buttonStyle(.bordered)
                         .controlSize(.regular)
                     }
                 }

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-04-05
+
+### Added
+- Universal cloud placeholder download: automatically download cloud-only files before sync (supports iCloud, Google Drive, Dropbox, OneDrive, etc.)
+- Uses macOS native `FileManager.startDownloadingUbiquitousItem` API instead of iCloud-specific `brctl`
+- FSEvents filter for Google Drive `.tmp.drivedownload` temporary files
+
+### Fixed
+- Export settings button color now matches import button (was purple, now consistent gray)
+
+### 新增
+- 通用雲端佔位檔下載：同步前自動下載僅存在雲端的檔案（支援 iCloud、Google Drive、Dropbox、OneDrive 等）
+- 使用 macOS 原生 `FileManager.startDownloadingUbiquitousItem` API 取代 iCloud 專用的 `brctl`
+- FSEvents 過濾 Google Drive `.tmp.drivedownload` 暫存檔
+
+### 修正
+- 匯出設定按鈕顏色統一為與匯入按鈕一致（原為紫色填滿，改為灰色外框）
+
 ## [1.1.1] - 2026-04-05
 
 ### Changed
