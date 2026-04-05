@@ -33,7 +33,7 @@
 
 ### 方式一：DMG 安裝（推薦）
 
-1. 從 [Releases](https://github.com/kaa5945/FolderSync/releases) 下載最新的 `.dmg`
+1. 從 [Releases](https://github.com/adamtan945/FolderSync/releases) 下載最新的 `.dmg`
 2. 打開 DMG，將 **FolderSync** 拖入「應用程式」資料夾
 3. 啟動 FolderSync，圖示會出現在 Menu Bar
 4. 若尚未安裝 unison：
@@ -45,7 +45,7 @@
 
 ```bash
 # 複製專案
-git clone https://github.com/kaa5945/FolderSync.git
+git clone https://github.com/adamtan945/FolderSync.git
 cd FolderSync
 
 # 安裝 unison

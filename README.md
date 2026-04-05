@@ -33,7 +33,7 @@ Built for syncing Obsidian vaults between Google Drive and iCloud, but works wit
 
 ### Option 1: DMG (Recommended)
 
-1. Download the latest `.dmg` from [Releases](https://github.com/kaa5945/FolderSync/releases)
+1. Download the latest `.dmg` from [Releases](https://github.com/adamtan945/FolderSync/releases)
 2. Open the DMG and drag **FolderSync** to your Applications folder
 3. Launch FolderSync — it will appear in the Menu Bar
 4. Install unison if you haven't:
@@ -45,7 +45,7 @@ Built for syncing Obsidian vaults between Google Drive and iCloud, but works wit
 
 ```bash
 # Clone the repository
-git clone https://github.com/kaa5945/FolderSync.git
+git clone https://github.com/adamtan945/FolderSync.git
 cd FolderSync
 
 # Install unison
