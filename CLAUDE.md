@@ -71,6 +71,13 @@ FolderSyncApp
 
 `build/` 包含預建置的 DMG、`.app` 套件和 `AppIcon.icns`。此目錄已加入 gitignore。
 
+## Release 注意事項
+
+- **版號必須同步更新 `FolderSync/Services/UpdateService.swift:8` 的 `currentVersion`**，否則 app 的 check update 功能會失效（比對 GitHub 最新版時誤判為「已是最新」）。
+- Release 流程中需一併重建 `.app` 套件（更新 `Info.plist` 版號）和 DMG。
+- `.app` 套件需 ad-hoc 簽名（`codesign --force --deep --sign -`），簽名前先清除 xattr（`xattr -cr`）避免 resource fork 錯誤。
+- DMG 圖示透過 `fileicon set` 設定。
+
 ## 執行時依賴
 
 需要安裝 `unison`（`brew install unison`）。應用程式從使用者設定中解析其路徑（預設：Homebrew 安裝位置）。
