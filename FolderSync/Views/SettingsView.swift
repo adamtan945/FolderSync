@@ -38,12 +38,19 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(SettingsTab.allCases, id: \.self, selection: $selectedTab) { tab in
-                Label(tab.localizedName, systemImage: tab.icon)
-                    .font(.rounded(13))
+            VStack(spacing: 0) {
+                List(SettingsTab.allCases, id: \.self, selection: $selectedTab) { tab in
+                    Label(tab.localizedName, systemImage: tab.icon)
+                        .font(.rounded(13))
+                }
+                .listStyle(.sidebar)
+
+                Divider()
+
+                // 版本資訊 + 更新
+                sidebarVersionView
             }
             .navigationSplitViewColumnWidth(min: 150, ideal: 180)
-            .listStyle(.sidebar)
         } detail: {
             Group {
                 switch selectedTab {
@@ -95,6 +102,78 @@ struct SettingsView: View {
         }
         .onAppear {
             syncManager.checkUnisonInstalled()
+        }
+    }
+
+    // MARK: - Sidebar 底部版本列
+
+    @ViewBuilder
+    private var sidebarVersionView: some View {
+        let appState = syncManager.appState
+
+        if appState.isDownloadingUpdate {
+            // 下載中
+            VStack(spacing: 6) {
+                Text(l["updateDownloading"])
+                    .font(.rounded(11))
+                    .foregroundStyle(.secondary)
+                ProgressView(value: appState.updateDownloadProgress)
+                    .progressViewStyle(.linear)
+                    .tint(Theme.primary)
+                Text("\(Int(appState.updateDownloadProgress * 100))%")
+                    .font(.mono(10))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+        } else if appState.updateAvailable {
+            // 有新版本
+            Button {
+                Task { await syncManager.downloadAndInstallUpdate() }
+            } label: {
+                VStack(spacing: 2) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 11))
+                        Text("v\(appState.latestVersion)")
+                            .font(.rounded(12, weight: .medium))
+                    }
+                    Text(l["updateAvailableShort"])
+                        .font(.rounded(10))
+                }
+                .foregroundStyle(Theme.warning)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            }
+            .buttonStyle(.plain)
+            .background(Theme.warning.opacity(0.08))
+        } else {
+            // 正常：版本號 + 檢查按鈕
+            HStack(spacing: 6) {
+                Text("v\(UpdateService.currentVersion)")
+                    .font(.mono(11))
+                    .foregroundStyle(.tertiary)
+
+                Spacer()
+
+                if appState.isCheckingUpdate {
+                    ProgressView()
+                        .controlSize(.small)
+                        .scaleEffect(0.7)
+                } else {
+                    Button {
+                        Task { await syncManager.checkForUpdates() }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .buttonStyle(.plain)
+                    .help(l["updateCheck"])
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
     }
 }

@@ -22,7 +22,8 @@ struct FolderSyncApp: App {
                 appState: syncManager.appState,
                 onSyncAll: { Task { await syncManager.syncAllNow() } },
                 onTogglePause: { syncManager.toggleGlobalPause() },
-                onSyncPair: { pair in Task { await syncManager.triggerSync(for: pair) } }
+                onSyncPair: { pair in Task { await syncManager.triggerSync(for: pair) } },
+                onUpdate: { Task { await syncManager.downloadAndInstallUpdate() } }
             )
         } label: {
             MenuBarIcon(status: syncManager.appState.overallStatus)

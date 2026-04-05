@@ -36,6 +36,29 @@ final class AppState {
     /// unison 是否已安裝
     var unisonInstalled: Bool = false
 
+    // MARK: - 更新狀態
+
+    /// 是否有新版本可用
+    var updateAvailable: Bool = false
+
+    /// 最新版本號
+    var latestVersion: String = ""
+
+    /// 最新版 DMG 下載 URL
+    var latestDownloadURL: URL?
+
+    /// 下載進度（0~1）
+    var updateDownloadProgress: Double = 0
+
+    /// 是否正在下載更新
+    var isDownloadingUpdate: Bool = false
+
+    /// 是否正在檢查更新
+    var isCheckingUpdate: Bool = false
+
+    /// 更新錯誤訊息
+    var updateError: String?
+
     // MARK: - 計算屬性
 
     /// 整體狀態（用於 Menu Bar 圖示）

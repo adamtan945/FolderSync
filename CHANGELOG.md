@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-04-05
+
+### Added
+- Auto-update via GitHub Releases API: checks for new versions on app launch
+- Update notification in Menu Bar and Settings sidebar bottom
+- Manual update check button in Settings sidebar
+- One-click update: download DMG, install, cleanup, and restart automatically
+- Version display in Settings sidebar footer
+
+### 新增
+- 透過 GitHub Releases API 自動檢查更新：啟動時偵測新版本
+- Menu Bar 與設定視窗 sidebar 底部顯示更新提示
+- 設定視窗 sidebar 底部手動檢查更新按鈕
+- 一鍵更新：自動下載 DMG、安裝、清除暫存、重啟
+- 設定視窗 sidebar 底部顯示當前版本號
+
 ## [1.0.0] - 2026-04-05
 
 ### Added

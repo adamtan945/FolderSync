@@ -122,5 +122,15 @@
   "excLog": "Log files",
   "excSwp": "Vim swap files",
   "excGit": "Git repository",
-  "excSvn": "SVN repository"
+  "excSvn": "SVN repository",
+
+  "updateAvailable": "Update available: v{version}",
+  "updateAvailableShort": "Update available",
+  "updateCheck": "Check for updates",
+  "updateChecking": "Checking...",
+  "updateDownloading": "Downloading...",
+  "updateInstalling": "Installing...",
+  "updateUpToDate": "Up to date",
+  "updateFailed": "Update failed",
+  "updateRestart": "Restarting..."
 }

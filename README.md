@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 [![Swift](https://img.shields.io/badge/Swift-5.10-F05138.svg)](https://swift.org/)
 [![macOS](https://img.shields.io/badge/macOS-14%2B-000000.svg)](https://www.apple.com/macos/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -35,8 +35,12 @@ Built for syncing Obsidian vaults between Google Drive and iCloud, but works wit
 
 1. Download the latest `.dmg` from [Releases](https://github.com/adamtan945/FolderSync/releases)
 2. Open the DMG and drag **FolderSync** to your Applications folder
-3. Launch FolderSync — it will appear in the Menu Bar
-4. Install unison if you haven't:
+3. Remove the quarantine attribute (the app is not code-signed):
+   ```bash
+   xattr -cr /Applications/FolderSync.app
+   ```
+4. Launch FolderSync — it will appear in the Menu Bar
+5. Install unison if you haven't:
    ```bash
    brew install unison
    ```

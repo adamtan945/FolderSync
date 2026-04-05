@@ -122,5 +122,15 @@
   "excLog": "日誌檔案",
   "excSwp": "Vim 暫存檔",
   "excGit": "Git 版本庫",
-  "excSvn": "SVN 版本庫"
+  "excSvn": "SVN 版本庫",
+
+  "updateAvailable": "有新版本 {version} 可更新",
+  "updateAvailableShort": "可更新",
+  "updateCheck": "檢查更新",
+  "updateChecking": "檢查中...",
+  "updateDownloading": "下載中...",
+  "updateInstalling": "安裝中...",
+  "updateUpToDate": "已是最新版本",
+  "updateFailed": "更新失敗",
+  "updateRestart": "即將重新啟動..."
 }

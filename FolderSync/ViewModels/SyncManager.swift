@@ -10,6 +10,7 @@ final class SyncManager {
     let appState = AppState()
 
     private let unisonService = UnisonService()
+    private let updateService = UpdateService()
     private var watchers: [UUID: FileWatcherService] = [:]
     private var syncLocks: Set<UUID> = [] // 防止同一配對並行同步
 
@@ -24,6 +25,11 @@ final class SyncManager {
             startAllWatchers()
             // 啟動時執行一次完整同步
             await syncAllNow()
+        }
+
+        // 啟動時檢查是否有新版（僅提示，不自動安裝）
+        Task {
+            await checkForUpdates()
         }
     }
 
@@ -245,6 +251,61 @@ final class SyncManager {
             print("[SyncManager] 登入啟動設定失敗: \(error.localizedDescription)")
         }
         appState.saveToDisk()
+    }
+
+    // MARK: - 自動更新
+
+    /// 檢查是否有新版本
+    func checkForUpdates() async {
+        appState.isCheckingUpdate = true
+        appState.updateError = nil
+
+        do {
+            if let update = try await updateService.checkForUpdate() {
+                appState.updateAvailable = true
+                appState.latestVersion = update.version
+                appState.latestDownloadURL = update.downloadURL
+            } else {
+                appState.updateAvailable = false
+            }
+        } catch {
+            print("[SyncManager] 檢查更新失敗: \(error.localizedDescription)")
+            appState.updateError = error.localizedDescription
+        }
+
+        appState.isCheckingUpdate = false
+    }
+
+    /// 檢查更新，有新版則自動下載安裝
+    func checkAndAutoUpdate() async {
+        await checkForUpdates()
+        if appState.updateAvailable {
+            await downloadAndInstallUpdate()
+        }
+    }
+
+    /// 下載並安裝更新
+    func downloadAndInstallUpdate() async {
+        guard let url = appState.latestDownloadURL else { return }
+
+        appState.isDownloadingUpdate = true
+        appState.updateDownloadProgress = 0
+        appState.updateError = nil
+
+        do {
+            let dmgPath = try await updateService.downloadUpdate(url: url) { [weak self] progress in
+                Task { @MainActor [weak self] in
+                    self?.appState.updateDownloadProgress = progress
+                }
+            }
+
+            appState.updateDownloadProgress = 1.0
+            try await updateService.installUpdate(dmgPath: dmgPath)
+        } catch {
+            appState.isDownloadingUpdate = false
+            appState.updateError = error.localizedDescription
+            print("[SyncManager] 更新失敗: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - FileWatcher 管理

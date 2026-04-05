@@ -8,6 +8,7 @@ struct MenuBarView: View {
     let onSyncAll: () -> Void
     let onTogglePause: () -> Void
     let onSyncPair: (SyncPair) -> Void
+    let onUpdate: () -> Void
 
     @Environment(\.openWindow) private var openWindow
     private var l: L10n { L10n.shared }
@@ -28,6 +29,27 @@ struct MenuBarView: View {
             }
         }
         .disabled(true)
+
+        // 更新狀態提示
+        if appState.isDownloadingUpdate {
+            Button {} label: {
+                Label(
+                    "\(l["updateDownloading"]) \(Int(appState.updateDownloadProgress * 100))%",
+                    systemImage: "arrow.down.circle"
+                )
+            }
+            .disabled(true)
+        } else if appState.updateAvailable {
+            // 自動更新失敗時可手動重試
+            Button {
+                onUpdate()
+            } label: {
+                Label(
+                    l["updateAvailable"].replacingOccurrences(of: "{version}", with: appState.latestVersion),
+                    systemImage: "arrow.up.circle.fill"
+                )
+            }
+        }
 
         Divider()
 

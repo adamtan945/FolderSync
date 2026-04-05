@@ -1,4 +1,4 @@
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 [![Swift](https://img.shields.io/badge/Swift-5.10-F05138.svg)](https://swift.org/)
 [![macOS](https://img.shields.io/badge/macOS-14%2B-000000.svg)](https://www.apple.com/macos/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -35,8 +35,12 @@
 
 1. 從 [Releases](https://github.com/adamtan945/FolderSync/releases) 下載最新的 `.dmg`
 2. 打開 DMG，將 **FolderSync** 拖入「應用程式」資料夾
-3. 啟動 FolderSync，圖示會出現在 Menu Bar
-4. 若尚未安裝 unison：
+3. 移除隔離屬性（App 未經 Apple 簽名）：
+   ```bash
+   xattr -cr /Applications/FolderSync.app
+   ```
+4. 啟動 FolderSync，圖示會出現在 Menu Bar
+5. 若尚未安裝 unison：
    ```bash
    brew install unison
    ```
